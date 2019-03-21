@@ -18,7 +18,7 @@
 #ifndef __MADHOUSE_RIEMANN_QUERY_H__
 #define __MADHOUSE_RIEMANN_QUERY_H__ 1
 
-#include <riemann/proto/riemann.pb-c.h>
+#include <riemann.pb-c.h>
 
 typedef Query riemann_query_t;
 

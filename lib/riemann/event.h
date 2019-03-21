@@ -18,7 +18,7 @@
 #ifndef __MADHOUSE_RIEMANN_EVENT_H__
 #define __MADHOUSE_RIEMANN_EVENT_H__ 1
 
-#include <riemann/proto/riemann.pb-c.h>
+#include <riemann.pb-c.h>
 #include <riemann/attribute.h>
 #include <stdarg.h>
 

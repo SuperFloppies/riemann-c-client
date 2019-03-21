@@ -15,7 +15,7 @@
  * License along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 
-#include <riemann/riemann-client.h>
+#include <riemann-client.h>
 
 #include <errno.h>
 #include <inttypes.h>
@@ -26,7 +26,7 @@
 #include <getopt.h>
 #include <time.h>
 
-#include "riemann/platform.h"
+#include "platform.h"
 
 #if HAVE_JSON_C
 #include <json.h>

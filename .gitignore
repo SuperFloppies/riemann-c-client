@@ -1,3 +1,6 @@
+# Meson
+BUILD
+
 # automake artifacts
 /aclocal.m4
 /autom4te.cache/

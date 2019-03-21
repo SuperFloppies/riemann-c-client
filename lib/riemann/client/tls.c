@@ -18,7 +18,7 @@
 #include <stdlib.h>
 
 #include "riemann/_private.h"
-#include "riemann/platform.h"
+#include "platform.h"
 
 #include "riemann/client/tls.h"
 
