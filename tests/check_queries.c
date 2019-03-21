@@ -1,4 +1,7 @@
+#include <errno.h>
+
 #include <riemann/query.h>
+#include <check.h>
 
 START_TEST (test_riemann_query_new)
 {

@@ -4,7 +4,7 @@
 #include <errno.h>
 #include <stdlib.h>
 
-#include "riemann/platform.h"
+#include "platform.h"
 #include "tests.h"
 
 #include "check_library.c"

@@ -1,5 +1,8 @@
 #include <riemann/attribute.h>
 
+#include <check.h>
+#include <errno.h>
+
 START_TEST (test_riemann_attribute_new_and_free)
 {
   riemann_attribute_t *attrib;

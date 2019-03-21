@@ -1,5 +1,9 @@
+#include <errno.h>
+
 #include <riemann/attribute.h>
 #include <riemann/event.h>
+
+#include <check.h>
 
 START_TEST (test_riemann_event_new)
 {

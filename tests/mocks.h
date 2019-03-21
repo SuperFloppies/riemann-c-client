@@ -18,8 +18,14 @@
 #ifndef __MADHOUSE_RIEMANN_TESTS_MOCKS_H__
 #define __MADHOUSE_RIEMANN_TESTS_MOCKS_H__ 1
 
+#include <errno.h>
+
 #include <sys/types.h>
 #include <sys/socket.h>
+
+#include <platform.h>
+
+#define RTLD_NEXT (((void *)-1))
 
 #define make_mock(name, retval, ...)                \
   static retval (*mock_##name) ();                  \

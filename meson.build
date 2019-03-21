@@ -1,4 +1,9 @@
-project('riemann-c-client', 'c', version: '1.10.4-MESON')
+project(
+    'riemann-c-client', 'c', version: '1.10.4-MESON',
+    default_options: [
+        'c_std=gnu11'
+    ]
+)
 
 config = configuration_data()
 config.set('MAJOR_VERSION', '1')
@@ -8,8 +13,16 @@ config.set('PATCH_VERSION', '4')
 config.set_quoted('PACKAGE_VERSION', meson.project_version())
 config.set_quoted('PACKAGE_STRING', meson.project_name())
 
-cc  = meson.get_compiler('c')
-dep = cc.find_library('protobuf-c')
+cc    = meson.get_compiler('c')
+
+dl    = cc.find_library('dl')
+pbc   = cc.find_library('protobuf-c')
+jsonc = dependency('json-c', version: '>= 0.11', required: false)
+gtls  = dependency('gnutls', version: '>2.8', required: false)
+
+dep   = [ pbc, jsonc, gtls ]
+
+check = dependency('check', required: false)
 
 protoc = find_program('protoc-c')
 gen = generator(protoc, output: ['@BASENAME@.pb-c.c', '@BASENAME@.pb-c.h'], arguments: ['--proto_path=@CURRENT_SOURCE_DIR@', '--c_out=@BUILD_DIR@', '@INPUT@'])
@@ -29,9 +42,28 @@ libclientsrc = [
     libclientgensrc
 ]
 
-incdirs = include_directories('lib', 'lib/riemann', 'lib/riemann/client')
+incdirs = include_directories('.', 'lib', 'lib/riemann', 'lib/riemann/client')
+config.set('HAVE_CHECK', check.found())
 
-configure_file(input: 'lib/riemann/riemann-client.h.in', output: 'riemann-client.h', configuration: config)
+configure_file(
+    input: 'lib/riemann/riemann-client.h.in',
+    output: 'riemann-client.h',
+    configuration: config
+)
 configure_file(output: 'platform.h', configuration: config)
 
-shared_library('riemann_client', libclientsrc, include_directories: incdirs, dependencies: dep)
+lib = shared_library(
+    'riemann_client',
+    libclientsrc,
+    include_directories: incdirs,
+    dependencies: dep
+)
+libdep = declare_dependency(link_with: lib, include_directories: incdirs)
+
+if check.found()
+    test('general test', executable('check_libriemann',
+        [
+            'tests/mocks.c', 'tests/check_libriemann.c',
+            libclientgensrc
+        ], dependencies: [libdep, check, pbc, dl]))
+endif

@@ -1,4 +1,9 @@
+#include <errno.h>
+
 #include <riemann/client.h>
+#include <check.h>
+
+#include <platform.h>
 
 START_TEST (test_riemann_c_client_library)
 {

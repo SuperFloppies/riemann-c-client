@@ -1,5 +1,10 @@
+#include <errno.h>
+#include <stdlib.h>
+
 #include <riemann/message.h>
 #include <riemann/event.h>
+
+#include <check.h>
 
 START_TEST (test_riemann_message_new)
 {
