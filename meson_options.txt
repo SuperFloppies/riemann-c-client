@@ -1,0 +1,1 @@
+option('tls', type: 'feature', value: 'auto', description: 'enable Transport Layer Security (TLS)')
