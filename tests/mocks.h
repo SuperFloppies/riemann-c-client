@@ -18,12 +18,15 @@
 #ifndef __MADHOUSE_RIEMANN_TESTS_MOCKS_H__
 #define __MADHOUSE_RIEMANN_TESTS_MOCKS_H__ 1
 
+#define UNUSED __attribute__((unused))
+
 #include <sys/types.h>
 #include <sys/socket.h>
 
 #define make_mock(name, retval, ...)                \
   static retval (*mock_##name) ();                  \
   static retval (*real_##name) ();                  \
+  retval name (__VA_ARGS__) __attribute__((weak));  \
   retval name (__VA_ARGS__)
 
 #define mock(name, func) mock_##name = func
@@ -60,7 +63,7 @@ make_mock (recv, ssize_t, int sockfd, void *buf, size_t len, int flags)
   STUB (recv, sockfd, buf, len, flags);
 }
 
-int mock_enosys_int_always_fail ();
-ssize_t mock_enosys_ssize_t_always_fail ();
+static int mock_enosys_int_always_fail () UNUSED;
+static ssize_t mock_enosys_ssize_t_always_fail () UNUSED;
 
 #endif

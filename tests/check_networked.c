@@ -1,5 +1,3 @@
-#define _GNU_SOURCE
-
 #include <check.h>
 #include <errno.h>
 #include <netdb.h>
@@ -14,7 +12,7 @@
 #include <config.h>
 #include "riemann/_private.h"
 
-#if HAVE_GNUTLS
+#ifdef HAVE_GNUTLS
 #include <gnutls/gnutls.h>
 #endif
 
@@ -103,7 +101,7 @@ START_TEST(test_net_riemann_client_connect)
   restore (socket);
 
   /** TLS tests **/
-#if HAVE_GNUTLS
+#ifdef HAVE_GNUTLS
   ck_assert_errno
     (riemann_client_connect
      (client, RIEMANN_CLIENT_TLS,
@@ -253,7 +251,7 @@ START_TEST (test_net_riemann_client_create)
   ck_assert (client != NULL);
   riemann_client_free (client);
 
-#if HAVE_GNUTLS
+#ifdef HAVE_GNUTLS
   client = riemann_client_create
     (RIEMANN_CLIENT_TLS,
      RIEMANN_HOST, RIEMANN_TLS_PORT,
@@ -279,7 +277,7 @@ START_TEST (test_net_riemann_client_create)
 }
 END_TEST
 
-#if HAVE_GNUTLS
+#ifdef HAVE_GNUTLS
 make_mock (gnutls_record_send, ssize_t, gnutls_session_t session,
            const void *data, size_t len)
 {
@@ -840,7 +838,7 @@ test_riemann_network_tests (void)
   tcase_add_test (tc, test_net_riemann_client_send_message_oneshot);
   tcase_add_test (tc, test_net_riemann_client_recv_message);
 
-#if HAVE_GNUTLS
+#ifdef HAVE_GNUTLS
   tcase_add_test (tc, test_net_riemann_client_send_message_tls);
   tcase_add_test (tc, test_net_riemann_client_recv_message_tls);
 #endif

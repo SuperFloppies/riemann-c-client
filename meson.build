@@ -75,7 +75,6 @@ if ldver
     liblinkargs = '-Wl,--version-script,' + verscript
 endif
 
-
 lib = shared_library('riemann_client', libsrc, include_directories: incdirs, dependencies: libdeps, link_args: liblinkargs)
 libdep = declare_dependency(link_with: lib, include_directories: incdirs)
 testdeps = [ libdl, libdep, libcheck ]
@@ -86,7 +85,7 @@ if get_option('tests')
             [ 'tests/mocks.c', 'tests/check_libriemann.c', protohdr], dependencies: testdeps))
         test('symver', executable('test-symver',
             [ 'tests/mocks.c', 'tests/check_symver.c', protohdr], dependencies: testdeps))
-        # test('networked', executable('test-networked',
-            # [ 'tests/mocks.c', 'tests/check_networked.c', protohdr], dependencies: testdeps))
+        test('networked', executable('test-networked',
+            [ 'tests/mocks.c', 'tests/check_networked.c', protohdr], dependencies: testdeps))
     endif
 endif
