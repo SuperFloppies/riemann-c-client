@@ -1,7 +1,9 @@
 #
 # TODO: Incorporate linker script, generate configuration header.
 #
-project('riemann-c-client', 'c', version: '1.10.4-M2')
+project('riemann-c-client', 'c', version: '1.10.4-M2', default_options: [
+    'b_asneeded=false'
+])
 
 prjstr = meson.project_name()
 verstr = meson.project_version()
@@ -44,8 +46,9 @@ libsrc = [
     libgensrc
 ]
 
-libcheck     = dependency('check', required: false)
+libcheck     = dependency('check', required: get_option('tests'))
 libprotobufc = cc.find_library('protobuf-c')
+libdl        = cc.find_library('dl')
 libjsonc     = dependency('json-c', version: '>= 0.11', required: false)
 libgnutls    = dependency('gnutls', version: '> 2.8', required: get_option('tls'))
 
@@ -60,14 +63,16 @@ cf.set('HAVE_JSON_C', libjsonc.found())
 cf.set('HAVE_CHECK',  libcheck.found())
 cf.set('HAVE_GNUTLS', libgnutls.found())
 
-libdeps = [ libcheck, libprotobufc, libjsonc, libgnutls ]
+libdeps = [ libdl, libprotobufc, libjsonc, libgnutls ]
 
 configure_file(output: 'config.h', configuration: cf)
-configure_file(input: 'lib/riemann/riemann-client.h.in', output: '@PLAINNAME@', configuration: cf, install_dir: join_paths(get_option('includedir'), 'riemann'))
+configure_file(input: 'lib/riemann/riemann-client.h.in', output: '@BASENAME@', configuration: cf, install_dir: join_paths(get_option('includedir'), 'riemann'))
 
 lib = shared_library('riemann_client', libsrc, include_directories: incdirs, dependencies: libdeps)
 libdep = declare_dependency(link_with: lib, include_directories: incdirs)
-if libcheck.found()
-    test('main', executable('test-main',
-        [ 'tests/mocks.c', 'tests/check_libriemann.c', libgensrc], dependencies: [libdep]))
+if get_option('tests')
+    if libcheck.found()
+        test('main', executable('test-main',
+            [ 'tests/mocks.c', 'tests/check_libriemann.c'], dependencies: [libdep, libcheck]))
+    endif
 endif
