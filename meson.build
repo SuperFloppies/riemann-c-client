@@ -51,6 +51,7 @@ libsrc = [
     'lib/riemann/attribute.c',
     'lib/riemann/query.c',
     'lib/riemann/simple.c',
+    'lib/riemann/client/tls.c',
     protosrc
 ]
 
@@ -60,13 +61,7 @@ libdl        = cc.find_library('dl')
 libjsonc     = dependency('json-c', version: '>= 0.11', required: false)
 libgnutls    = dependency('gnutls', version: '> 2.8', required: get_option('tls'))
 
-if libgnutls.found()
-    libsrc += 'lib/riemann/client/tls.c'
-endif
-
-
 cf.set('HAVE_VERSIONING', ldver)
-
 cf.set('HAVE_JSON_C', libjsonc.found())
 cf.set('HAVE_CHECK',  libcheck.found())
 cf.set('HAVE_GNUTLS', libgnutls.found())
