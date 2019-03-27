@@ -35,9 +35,13 @@ cf.set('NUMBER_VERSION', '0x00010A04')
 incdirs = include_directories('lib')
 
 protocc  = find_program('protoc-c')
-protogen = generator(protocc, output: ['@BASENAME@.pb-c.c', '@BASENAME@.pb-c.h'], arguments: ['--proto_path=@CURRENT_SOURCE_DIR@', '--c_out=@BUILD_DIR@', '@INPUT@'])
-
-libgensrc = protogen.process('riemann.proto')
+protosrc = custom_target(
+    'protosrc',
+    input:   'riemann.proto',
+    output:  ['@BASENAME@.pb-c.c', '@BASENAME@.pb-c.h'],
+    command: [protocc, '--proto_path=@CURRENT_SOURCE_DIR@', '--c_out=@OUTDIR@', '@INPUT@']
+)
+protohdr = protosrc[1]
 libsrc = [
     'lib/riemann/client.c',
     'lib/riemann/client/tcp.c',
@@ -47,7 +51,7 @@ libsrc = [
     'lib/riemann/attribute.c',
     'lib/riemann/query.c',
     'lib/riemann/simple.c',
-    libgensrc
+    protosrc
 ]
 
 libcheck     = dependency('check', required: get_option('tests'))
@@ -60,9 +64,6 @@ if libgnutls.found()
     libsrc += 'lib/riemann/client/tls.c'
 endif
 
-if ldver
-    add_global_link_arguments('-Wl,--version-script,' + verscript, language: 'c')
-endif
 
 cf.set('HAVE_VERSIONING', ldver)
 
@@ -70,16 +71,23 @@ cf.set('HAVE_JSON_C', libjsonc.found())
 cf.set('HAVE_CHECK',  libcheck.found())
 cf.set('HAVE_GNUTLS', libgnutls.found())
 
-libdeps = [ libdl, libprotobufc, libjsonc, libgnutls ]
+libdeps = [ libprotobufc, libjsonc, libgnutls, libdl ]
 
 configure_file(output: 'config.h', configuration: cf)
 configure_file(input: 'lib/riemann/riemann-client.h.in', output: '@BASENAME@', configuration: cf, install_dir: join_paths(get_option('includedir'), 'riemann'))
 
-lib = shared_library('riemann_client', libsrc, include_directories: incdirs, dependencies: libdeps)
+if ldver
+    liblinkargs = '-Wl,--version-script,' + verscript
+endif
+
+
+lib = shared_library('riemann_client', libsrc, include_directories: incdirs, dependencies: libdeps, link_args: liblinkargs)
 libdep = declare_dependency(link_with: lib, include_directories: incdirs)
+testdeps = [ libdl, libdep, libcheck ]
+
 if get_option('tests')
     if libcheck.found()
         test('main', executable('test-main',
-            [ 'tests/mocks.c', 'tests/check_libriemann.c'], dependencies: [libdep, libcheck]))
+            [ 'tests/mocks.c', 'tests/check_libriemann.c', protohdr], dependencies: testdeps))
     endif
 endif
