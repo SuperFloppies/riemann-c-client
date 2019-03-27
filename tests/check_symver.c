@@ -5,7 +5,7 @@
 #include <stdlib.h>
 #include <riemann/client.h>
 
-#include "riemann/platform.h"
+#include <config.h>
 #include "tests.h"
 
 #if HAVE_VERSIONING

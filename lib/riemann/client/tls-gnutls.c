@@ -24,7 +24,7 @@
 #include <sys/socket.h>
 
 #include "riemann/_private.h"
-#include "riemann/platform.h"
+#include <config.h>
 
 #include "riemann/client/tls.h"
 

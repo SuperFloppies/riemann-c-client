@@ -18,11 +18,10 @@
 #include <stdlib.h>
 
 #include "riemann/_private.h"
-#include "riemann/platform.h"
 
 #include "riemann/client/tls.h"
 
-#if HAVE_GNUTLS
+#ifdef HAVE_GNUTLS
 
 #include <gnutls/gnutls.h>
 #include <gnutls/x509.h>

@@ -11,7 +11,7 @@
 
 #include <riemann/client.h>
 #include <riemann/simple.h>
-#include "riemann/platform.h"
+#include <config.h>
 #include "riemann/_private.h"
 
 #if HAVE_GNUTLS

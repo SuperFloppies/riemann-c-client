@@ -18,7 +18,7 @@
 #ifndef __MADHOUSE_RIEMANN_SIMPLE_H__
 #define __MADHOUSE_RIEMANN_SIMPLE_H__ 1
 
-#include <riemann/riemann-client.h>
+#include <riemann-client.h>
 
 #ifdef __cplusplus
 extern "C" {

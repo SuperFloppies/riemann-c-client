@@ -18,7 +18,7 @@
 #ifndef __MADHOUSE_RIEMANN_MESSAGE_H__
 #define __MADHOUSE_RIEMANN_MESSAGE_H__ 1
 
-#include <riemann/proto/riemann.pb-c.h>
+#include <riemann.pb-c.h>
 #include <riemann/event.h>
 #include <riemann/query.h>
 

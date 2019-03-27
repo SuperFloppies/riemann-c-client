@@ -18,11 +18,10 @@
 #ifndef __MADHOUSE_RIEMANN_PRIVATE_H__
 #define __MADHOUSE_RIEMANN_PRIVATE_H__ 1
 
-#include <riemann/riemann-client.h>
+#include <riemann-client.h>
+#include <config.h>
 
-#include "riemann/platform.h"
-
-#if HAVE_GNUTLS
+#ifdef HAVE_GNUTLS
 #include <gnutls/gnutls.h>
 #endif
 
@@ -38,7 +37,7 @@ struct _riemann_client_t
   riemann_client_send_message_t send;
   riemann_client_recv_message_t recv;
 
-#if HAVE_GNUTLS
+#ifdef HAVE_GNUTLS
   struct
   {
     gnutls_session_t session;
@@ -47,7 +46,7 @@ struct _riemann_client_t
 #endif
 };
 
-#if HAVE_VERSIONING
+#ifdef HAVE_VERSIONING
 #define SYMVER(symbol) symbol ## _default
 #else
 #define SYMVER(symbol) symbol

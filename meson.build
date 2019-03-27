@@ -13,16 +13,20 @@ verpat = vernum[0].split('.')[2]
 
 cf = configuration_data()
 cf.set_quoted('PROJECT_NAME', prjstr)
-cf.set_quoted('PROJECT_VERSION', verstr)
-cf.set_quoted('PROJECT_STRING', prjstr + ' ' + verstr)
+cf.set_quoted('PACKAGE_VERSION', verstr)
+cf.set_quoted('PACKAGE_STRING', prjstr + ' ' + verstr)
+cf.set('MAJOR_VERSION', vermaj)
+cf.set('MINOR_VERSION', vermin)
+cf.set('PATCH_VERSION', verpat)
 
 # TODO: DRY. This is repetition of information already encoded above.
 # I need to find a way to generate this properly, just being lazy right now.
 cf.set('NUMBER_VERSION', '0x00010A04')
 
 cc = meson.get_compiler('c')
+add_global_arguments('-D_GNU_SOURCE', language: 'c')
 
-incdirs = include_directories('.', 'lib', 'lib/riemann', 'lib/riemann/client')
+incdirs = include_directories('lib')
 
 protocc  = find_program('protoc-c')
 protogen = generator(protocc, output: ['@BASENAME@.pb-c.c', '@BASENAME@.pb-c.h'], arguments: ['--proto_path=@CURRENT_SOURCE_DIR@', '--c_out=@BUILD_DIR@', '@INPUT@'])
@@ -31,7 +35,6 @@ libgensrc = protogen.process('riemann.proto')
 libsrc = [
     'lib/riemann/client.c',
     'lib/riemann/client/tcp.c',
-    'lib/riemann/client/tls.c',
     'lib/riemann/client/udp.c',
     'lib/riemann/event.c',
     'lib/riemann/message.c',
@@ -46,6 +49,10 @@ libprotobufc = cc.find_library('protobuf-c')
 libjsonc     = dependency('json-c', version: '>= 0.11', required: false)
 libgnutls    = dependency('gnutls', version: '> 2.8', required: get_option('tls'))
 
+if libgnutls.found()
+    libsrc += 'lib/riemann/client/tls.c'
+endif
+
 ldver = cc.has_link_argument('-Wl,--version-script,conftest.ver')
 cf.set('HAVE_VERSIONING', ldver)
 
@@ -56,8 +63,9 @@ cf.set('HAVE_GNUTLS', libgnutls.found())
 libdeps = [ libcheck, libprotobufc, libjsonc, libgnutls ]
 
 configure_file(output: 'config.h', configuration: cf)
+configure_file(input: 'lib/riemann/riemann-client.h.in', output: '@PLAINNAME@', configuration: cf, install_dir: join_paths(get_option('includedir'), 'riemann'))
 
-lib = shared_library('riemann_client', libsrc, include_directories: incdirs)
+lib = shared_library('riemann_client', libsrc, include_directories: incdirs, dependencies: libdeps)
 libdep = declare_dependency(link_with: lib, include_directories: incdirs)
 if libcheck.found()
     test('main', executable('test-main',

@@ -26,7 +26,7 @@
 #include <getopt.h>
 #include <time.h>
 
-#include "riemann/platform.h"
+#include <config.h>
 
 #if HAVE_JSON_C
 #include <json.h>
