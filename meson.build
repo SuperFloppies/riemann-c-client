@@ -5,9 +5,16 @@ project('riemann-c-client', 'c', version: '1.10.4-M2', default_options: [
     'b_asneeded=false'
 ])
 
-prjstr = meson.project_name()
-verstr = meson.project_version()
-vernum = verstr.split('-')
+top = meson.source_root()
+
+cc = meson.get_compiler('c')
+add_global_arguments('-D_GNU_SOURCE', language: 'c')
+
+prjstr    = meson.project_name()
+verstr    = meson.project_version()
+vernum    = verstr.split('-')
+verscript = '@0@/@1@'.format(top, 'lib/riemann/libriemann.ver')
+ldver     = cc.has_link_argument('-Wl,--version-script,' + verscript)
 
 vermaj = vernum[0].split('.')[0]
 vermin = vernum[0].split('.')[1]
@@ -24,9 +31,6 @@ cf.set('PATCH_VERSION', verpat)
 # TODO: DRY. This is repetition of information already encoded above.
 # I need to find a way to generate this properly, just being lazy right now.
 cf.set('NUMBER_VERSION', '0x00010A04')
-
-cc = meson.get_compiler('c')
-add_global_arguments('-D_GNU_SOURCE', language: 'c')
 
 incdirs = include_directories('lib')
 
@@ -56,7 +60,10 @@ if libgnutls.found()
     libsrc += 'lib/riemann/client/tls.c'
 endif
 
-ldver = cc.has_link_argument('-Wl,--version-script,conftest.ver')
+if ldver
+    add_global_link_arguments('-Wl,--version-script,' + verscript, language: 'c')
+endif
+
 cf.set('HAVE_VERSIONING', ldver)
 
 cf.set('HAVE_JSON_C', libjsonc.found())

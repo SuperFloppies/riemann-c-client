@@ -61,3 +61,9 @@ gmon.out
 /tests/etc/*.pkcs8
 /tests/etc/*.csr
 /tests/etc/*.srl
+
+# Build directory
+/b
+
+# IDE stuff
+/.vscode

@@ -8,7 +8,7 @@
 #include <config.h>
 #include "tests.h"
 
-#if HAVE_VERSIONING
+#ifdef HAVE_VERSIONING
 START_TEST (test_riemann_client_connect_1_0)
 {
   riemann_client_t *client;
@@ -45,7 +45,7 @@ test_riemann_symbol_versioning (void)
 
   test_symver = tcase_create ("Symbol versioning");
 
-#if HAVE_VERSIONING
+#ifdef HAVE_VERSIONING
   tcase_add_test (test_symver, test_riemann_client_connect_1_0);
   tcase_add_test (test_symver, test_riemann_client_create_1_0);
 #endif
