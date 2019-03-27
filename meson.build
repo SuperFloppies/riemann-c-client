@@ -84,5 +84,9 @@ if get_option('tests')
     if libcheck.found()
         test('main', executable('test-main',
             [ 'tests/mocks.c', 'tests/check_libriemann.c', protohdr], dependencies: testdeps))
+        test('symver', executable('test-symver',
+            [ 'tests/mocks.c', 'tests/check_symver.c', protohdr], dependencies: testdeps))
+        # test('networked', executable('test-networked',
+            # [ 'tests/mocks.c', 'tests/check_networked.c', protohdr], dependencies: testdeps))
     endif
 endif
